@@ -320,18 +320,18 @@ namespace Dynamic {
 		}
 	}
 
-	int perform(int op1, int op2, char token)
+	auto perform(auto op1, auto op2, char token)
 	{
 		switch (token)
 		{
 		case '+':
 			return op1 + op2;
 		case '-':
-			return op1 - op2;
+			return op2 - op1;
 		case '*':
 			return op1 * op2;
 		case '/':
-			return op1 / op2;
+			return op2 / op1;
 		}
 	}
 }

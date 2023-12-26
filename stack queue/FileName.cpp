@@ -7,7 +7,7 @@ int main()
 	DyArray<char> stack;
 	DyArray<char> queue;
 
-	const char* name = "(5+5+5+5+5+5+5+5)*2";
+	const char* name = "(5+5)/2";
 
 	int size = strlen(name);
 	
@@ -53,7 +53,7 @@ int main()
 	cout << stack << endl;
 	cout << queue << endl;
 
-	DyArray<int> stack2;
+	DyArray<float> stack2;
 
 	while (!(queue.isEmpty()))
 	{
@@ -67,10 +67,10 @@ int main()
 		else
 		{
 			
-			int operand1 = stack2.remove_last();
-			int operand2 = stack2.remove_last();
-			int result = perform(operand1, operand2, token);
-			cout << operand1 << " " << token << " " << operand2 << " = " << result << endl;
+			auto operand1 = stack2.remove_last();
+			auto operand2 = stack2.remove_last();
+			auto result = perform(operand1, operand2, token);
+			cout << operand2 << " " << token << " " << operand1 << " = " << result << endl;
 			stack2.add(result);
 			cout << "stack: " << stack2 << endl;
 		}
