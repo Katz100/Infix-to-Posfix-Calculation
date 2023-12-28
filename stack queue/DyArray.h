@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cassert>
 #include <fstream>
-
+#include <string>
 
 #ifndef DYARRAY_H
 #define DYARRAY_H
-
+using namespace std;
 namespace Dynamic {
 	template<typename T>
 	class DyArray
@@ -303,9 +303,10 @@ namespace Dynamic {
 		return ostr;
 	}
 
-	int precedence(char op)
+	int precedence(std::string op)
 	{
-		switch (op)
+		char op2 = op[0];
+		switch (op2)
 		{
 		case '+':
 		case '-':
@@ -320,9 +321,11 @@ namespace Dynamic {
 		}
 	}
 
-	auto perform(auto op1, auto op2, char token)
+	
+	auto perform(auto op1, auto op2, std::string token)
 	{
-		switch (token)
+		char token2 = token[0];
+		switch (token2)
 		{
 		case '+':
 			return op1 + op2;
@@ -334,5 +337,97 @@ namespace Dynamic {
 			return op2 / op1;
 		}
 	}
+
+	auto calculate(const std::string& name)
+	{
+		DyArray<std::string> stack;
+		DyArray<std::string> queue;
+
+		
+		std::size_t size = name.size();
+
+		stack.add("#");
+
+		for (std::size_t i = 0; i < size; i++)
+		{
+			std::string token;
+			//operand case
+			if (isdigit(name[i]))
+			{
+				while (i < size && (isdigit(name[i]) || name[i] == '.'))
+				{
+
+					token += name[i++];
+
+				}
+				i--;
+			}
+			//operator case
+			else
+			{
+				token = name[i];
+			}
+			if (isdigit(token[0]))
+			{
+				queue.add(token);
+			}
+			else if (token == "(")
+			{
+				stack.add("(");
+			}
+			else if (token == ")")
+			{
+				std::string tmp = stack.remove_last();
+				while (tmp != "(")
+				{
+					queue.add(tmp);
+					tmp = stack.remove_last();
+				}
+			}
+			else
+			{
+				while (precedence(token) <= precedence(stack.topofstack()))
+				{
+					std::string tmp = stack.remove_last();
+					queue.add(tmp);
+				}
+				stack.add(token);
+			}
+		}
+
+		while (stack.topofstack() != "#")
+		{
+			std::string tmp = stack.remove_last();
+			queue.add(tmp);
+		}
+		
+		DyArray<double> stack2;
+
+		while (!(queue.isEmpty()))
+		{
+			std::string token = queue.remove_first();
+			
+			if (isdigit(token[0]))
+			{
+				stack2.add(stod(token));
+				
+			}
+			else
+			{
+
+				auto operand1 = stack2.remove_last();
+				auto operand2 = stack2.remove_last();
+				auto result = perform(operand1, operand2, token);
+				
+				stack2.add(result);
+				
+			}
+			
+		}
+
+		return stack2[0];
+	}
+	
 }
+
 #endif
